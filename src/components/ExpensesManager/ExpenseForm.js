@@ -13,6 +13,7 @@ export default function ExpenseForm({ labelSubmit, onSubmit, defaultValue }) {
         description: defaultValue ? defaultValue.description : '',
     })
     const [isInvalid, setIsInvalid] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
 
     function inputHandler(identifier, enteredValue) {
         setValueInput((currentValues) => {
@@ -25,7 +26,7 @@ export default function ExpenseForm({ labelSubmit, onSubmit, defaultValue }) {
     function cancelHandler() {
         navigate.goBack()
     }
-    function submitHandler() {
+    async function submitHandler() {
         const expenseData = {
             amount: +valueInput.amount, //"+"convert string to number
             date: new Date(valueInput.date),
@@ -37,11 +38,21 @@ export default function ExpenseForm({ labelSubmit, onSubmit, defaultValue }) {
         const descriptionIsValid = expenseData.description.trim().length > 0 //mencegah isinya spasi doang
 
         if (!amountIsValid || !dateIsValid || !descriptionIsValid) {
-            setIsInvalid(true) 
-            return 
+            setIsInvalid(true)
+            return
         }
 
-        onSubmit(expenseData)
+        setIsLoading(true) //set state loading menjadi true
+
+        try {
+            console.log('masuk try')
+            await onSubmit(expenseData)
+            setIsLoading(false) //set state loading menjadi false setelah asynchronus state selesai
+        } catch (error) {
+            console.log('masuk error')
+            setIsLoading(false) //set state loading menjadi false pada kasus error
+            console.error(error)
+        }
     }
 
     return (
@@ -85,8 +96,14 @@ export default function ExpenseForm({ labelSubmit, onSubmit, defaultValue }) {
                 <Button style={styles.button} mode="flat" onPress={cancelHandler}>
                     Cancel
                 </Button>
-                <Button style={styles.button} onPress={submitHandler}>
-                    {labelSubmit}
+                <Button
+                    style={styles.button}
+                    mode="contained"
+                    onPress={submitHandler}
+                    loading={isLoading} //menambahkan kondisi isLoading pada tombol
+                    disabled={isLoading} //menonaktifkan tombol saat isLoading=true
+                >
+                    {isLoading ? 'Loading...' : labelSubmit} {/*tombol menampilkan 'Loading...' saat isLoading=true*/}
                 </Button>
             </View>
         </View>
