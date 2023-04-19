@@ -1,7 +1,9 @@
 import axios from "axios"
 
-const url = 'thinkuh'
+const API_KEY = 'AIzaSyBXIDTcpzkJvw4iXUIbCyr3WgiqsEl-8vo '
+const url = 'https://rn-expenses-database-default-rtdb.firebaseio.com/'
 
+// CRUD EXPENSES 
 export const postExpense = async (expenseData) => {
     const response = await axios.post(`${url}/expenses.json`, expenseData)
     const id = response.data.name
@@ -18,9 +20,9 @@ export const getExpense = async () => {
 
         const expenseObj = {
             id: key,
-            amount : response.data[key].amount,
-            date : new Date (response.data[key].date),
-            description : response.data[key].description,
+            amount: response.data[key].amount,
+            date: new Date(response.data[key].date),
+            description: response.data[key].description,
         }
 
         expenses.push(expenseObj)
@@ -35,4 +37,28 @@ export const putExpense = (id, expenseData) => {
 
 export const delExpense = (id) => {
     return axios.delete(`${url}/expenses/${id}.json`)
+}
+
+// AUTH HTTP 
+
+async function authenticated(mode, email, password) {
+    const url = `https://identitytoolkit.googleapis.com/v1/accounts:${mode}?key=${API_KEY}`
+    const response = await axios.post(url, {
+        email,
+        password,
+        returnSecureToken: true
+    });
+
+    console.log(response.data)
+
+    const token = response.data.idToken
+    return token
+}
+
+export function createUser(email, password) {
+    return authenticated('signUp', email, password)
+}
+
+export function login(email, password) {
+    return authenticated('signInWithPassword', email, password)
 }

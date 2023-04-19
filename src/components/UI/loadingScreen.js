@@ -1,10 +1,11 @@
-import { View, StyleSheet, ActivityIndicator } from 'react-native'
+import { View, Text, StyleSheet, ActivityIndicator } from 'react-native'
 import { GlobalStyles } from '../../constants/styles';
 
-export default function LoadingScreen() {
+export default function LoadingScreen({message}) {
     return (
         <View style={styles.container}>
             <ActivityIndicator size={"large"} color={"white"} />
+            <Text>{message}</Text>
         </View>
     )
 }

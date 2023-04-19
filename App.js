@@ -1,3 +1,4 @@
+import React, { useState, useContext, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -6,15 +7,24 @@ import Ionicons from 'react-native-vector-icons/Ionicons'
 import ManageExpense from './src/screens/ManageExpense';
 import RecentExpenses from './src/screens/RecentExpenses';
 import AllExpenses from './src/screens/AllExpenses';
+import LoginScreen from './src/screens/Login';
 
 import { GlobalStyles } from './src/constants/styles';
 import IconButton from './src/components/UI/IconButton';
+import SignupScreen from './src/screens/SignUp';
 import { ExpenseContextProvider } from './src/store/expenseContext';
+import AuthContextProvider, { AuthContext } from './src/store/authContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import LoadingScreen from './src/components/UI/loadingScreen';
 
 const Stack = createStackNavigator();
 const BottomTabs = createBottomTabNavigator();
 
 function ExpensesOverview() {
+  const authCtx = useContext(AuthContext)
+  const handleLogout = () => {
+    authCtx.logout()
+  };
   return (
     <BottomTabs.Navigator
       screenOptions={({ navigation }) => ({
@@ -56,21 +66,70 @@ function ExpensesOverview() {
           ),
         }}
       />
+      <BottomTabs.Screen
+        name="Logout"
+        component={AllExpenses}
+        listeners={{
+          tabPress: handleLogout,
+        }}
+        options={{
+          title: 'All Expenses',
+          tabBarLabel: 'Logout',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="ios-log-out-outline" size={size} color={color} />
+          ),
+        }}
+      />
     </BottomTabs.Navigator>
   );
 }
 
-export default function App() {
+function Navigation() {
+  const [isLogin, setIsLogin] = useState(true)
+  const authCtx = useContext(AuthContext)
+  console.log(authCtx.isAuthenticate)
+
+  useEffect(() => {
+    async function fetchToken() {
+      const storedToken = await AsyncStorage.getItem('token')
+
+      if(storedToken){
+        authCtx.authenticate(storedToken)
+      }
+
+      setIsLogin(false)
+    }
+
+    fetchToken()
+  }, [])
+
+  if(isLogin){
+    return <LoadingScreen/>
+  }
+
   return (
-    <>
-      <ExpenseContextProvider>
-        <NavigationContainer>
-          <Stack.Navigator
-            screenOptions={{
-              headerStyle: { backgroundColor: GlobalStyles.colors.primary500 },
-              headerTintColor: 'white',
-            }}
-          >
+    <NavigationContainer>
+      <Stack.Navigator
+        screenOptions={{
+          headerStyle: { backgroundColor: GlobalStyles.colors.primary500 },
+          headerTintColor: 'white',
+        }}
+      >
+        {!authCtx.isAuthenticate ? (
+          <>
+            <Stack.Screen
+              name="login"
+              component={LoginScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="signup"
+              component={SignupScreen}
+              options={{ headerShown: false }}
+            />
+          </>
+        ) :
+          <>
             <Stack.Screen
               name="ExpensesOverview"
               component={ExpensesOverview}
@@ -83,9 +142,21 @@ export default function App() {
                 presentation: 'modal',
               }}
             />
-          </Stack.Navigator>
-        </NavigationContainer>
-      </ExpenseContextProvider>
+          </>
+        }
+      </Stack.Navigator>
+    </NavigationContainer>
+  )
+}
+
+export default function App() {
+  return (
+    <>
+      <AuthContextProvider>
+        <ExpenseContextProvider>
+          <Navigation />
+        </ExpenseContextProvider>
+      </AuthContextProvider>
     </>
   );
 }
