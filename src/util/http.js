@@ -1,7 +1,7 @@
 import axios from "axios"
 
-const API_KEY = 'AIzaSyBXIDTcpzkJvw4iXUIbCyr3WgiqsEl-8vo '
-const url = 'https://rn-expenses-database-default-rtdb.firebaseio.com/'
+const API_KEY ='AIzaSyB8089yEryJkVCaBN6apIGEOqx70zK09-g'
+const url = 'https://rn-expensedb-default-rtdb.firebaseio.com/'
 
 // CRUD EXPENSES 
 export const postExpense = async (expenseData) => {

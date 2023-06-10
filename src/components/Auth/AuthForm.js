@@ -3,7 +3,7 @@ import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { GlobalStyles } from '../../constants/styles';
 
-function AuthForm({ isLogin, onSubmit, credentialsInvalid }) {
+export default function AuthForm({ isLogin, onSubmit, credentialsInvalid }) {
     const [enteredEmail, setEnteredEmail] = useState('');
     const [enteredConfirmEmail, setEnteredConfirmEmail] = useState('');
     const [enteredPassword, setEnteredPassword] = useState('');
@@ -89,8 +89,6 @@ function AuthForm({ isLogin, onSubmit, credentialsInvalid }) {
         </View>
     );
 }
-
-export default AuthForm;
 
 function Button({ children, onPress }) {
     return (

@@ -2,20 +2,20 @@ import React, { useState, useContext, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 
 import ManageExpense from './src/screens/ManageExpense';
 import RecentExpenses from './src/screens/RecentExpenses';
 import AllExpenses from './src/screens/AllExpenses';
 import LoginScreen from './src/screens/Login';
+import SignupScreen from './src/screens/SignUp';
+import LoadingScreen from './src/components/UI/loadingScreen';
 
 import { GlobalStyles } from './src/constants/styles';
 import IconButton from './src/components/UI/IconButton';
-import SignupScreen from './src/screens/SignUp';
 import { ExpenseContextProvider } from './src/store/expenseContext';
 import AuthContextProvider, { AuthContext } from './src/store/authContext';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import LoadingScreen from './src/components/UI/loadingScreen';
 
 const Stack = createStackNavigator();
 const BottomTabs = createBottomTabNavigator();

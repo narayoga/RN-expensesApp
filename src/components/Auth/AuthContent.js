@@ -6,7 +6,7 @@ import AuthForm from './AuthForm';
 import { GlobalStyles } from '../../constants/styles';
 import { AuthContext } from '../../store/authContext';
 
-function AuthContent({ isLogin, onAuthenticate }) {
+export default function AuthContent({ isLogin, onAuthenticate }) {
   const navigation = useNavigation();
   const authCtx = useContext(AuthContext)
 
@@ -71,8 +71,6 @@ function AuthContent({ isLogin, onAuthenticate }) {
     </View>
   );
 }
-
-export default AuthContent;
 
 function FlatButton({ children, onPress }) {
   return (
